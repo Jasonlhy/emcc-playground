@@ -1,0 +1,1 @@
+emcc -s MAX_WEBGL_VERSION=2 hello_world.gles.c -o hello_world_gles.html
