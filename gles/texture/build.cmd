@@ -1,0 +1,1 @@
+emcc -s MAX_WEBGL_VERSION=2 hello_world.texture.c -o hello_world_texture.html
