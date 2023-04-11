@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script>
+        function createWorker() {
+            const oneGB = 1073741824;
+
+            // create worker
+            const myWorker = new Worker("myWorker.js");
+
+            // listen for myWorker to transfer the buffer back to main
+            myWorker.addEventListener("message", function handleMessageFromWorker(msg) {
+                console.log("message from worker received in main:", msg);
+
+                const bufTransferredBackFromWorker = msg.data;
+
+                console.log(
+                    "buf.byteLength in main AFTER transfer back from worker:",
+                    bufTransferredBackFromWorker.byteLength
+                );
+            });
+
+            // create the buffer
+            // const myBuf = new ArrayBuffer(oneGB);
+            const myBuf = new SharedArrayBuffer(oneGB);
+
+            console.log(
+                "buf.byteLength in main BEFORE transfer to worker:",
+                myBuf.byteLength
+            );
+
+            // send myBuf to myWorker and transfer the underlying ArrayBuffer
+            myWorker.postMessage(myBuf, [myBuf]);
+
+            console.log(
+                "buf.byteLength in main AFTER transfer to worker:",
+                myBuf.byteLength
+            );
+        }
+
+        function createWorkerWithSharedArrayBuffer() {
+            const oneGB = 1073741824;
+
+            // create worker
+            const myWorker = new Worker("mySharedWorker.js");
+
+            // listen for myWorker to transfer the buffer back to main
+            myWorker.addEventListener("message", function handleMessageFromWorker(msg) {
+                console.log("message from worker received in main:", msg);
+
+                const bufTransferredBackFromWorker = msg.data;
+
+                console.log(
+                    "buf.byteLength in main AFTER transfer back from worker:",
+                    bufTransferredBackFromWorker.byteLength
+                );
+            });
+
+            // create the SharedArrayBuffer
+            const myBuf = new SharedArrayBuffer(oneGB);
+
+            console.log(
+                "buf.byteLength in main BEFORE post to worker:",
+                myBuf.byteLength
+            );
+
+            // send myBuf to myWorker and transfer the underlying ArrayBuffer
+            myWorker.postMessage(myBuf);
+
+            console.log(
+                "buf.byteLength in main AFTER post to worker:",
+                myBuf.byteLength
+            );
+        }
+    </script>
+</head>
+
+<body>
+    <h1>SharedArrayBuffer</h1>
+    <button onclick="createWorker()">createWorker</button>
+    <button onclick="createWorkerWithSharedArrayBuffer()">createWorkerWithSharedArrayBuffer</button>
+</body>
+
+</html>
